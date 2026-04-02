@@ -68,6 +68,19 @@ export function getFreeAmount(day, year, month, data) {
 
   let base = hasRealBalance ? totalBankBalance : 0
 
+  // Add future spot incomes after today
+  let futureSpotIncome = 0
+  ;(data.spotIncomes || [])
+    .filter(s => s.date?.startsWith(monthStr))
+    .forEach(s => {
+      const d = parseInt(s.date.split('-')[2])
+      if (hasRealBalance) {
+        if (d > todayDate) futureSpotIncome += s.amount
+      } else {
+        if (d <= day) base += s.amount
+      }
+    })
+
   // Add future income (after today) that is confirmed
   let futureIncome = 0
   data.incomes.forEach(inc => {
@@ -102,7 +115,7 @@ export function getFreeAmount(day, year, month, data) {
     ? totalIncome * bufferRate * (1 - todayDate / daysInMonth) // prorate buffer for remaining month
     : totalIncome * bufferRate
 
-  return base + futureIncome - futureCosts - buffer
+  return base + futureIncome + futureSpotIncome - futureCosts - buffer
 }
 
 export function buildDayEvents(year, month, data) {
@@ -120,6 +133,9 @@ export function buildDayEvents(year, month, data) {
   data.spotCosts
     .filter(s => s.date?.startsWith(monthStr))
     .forEach(s => add(parseInt(s.date.split('-')[2]), { ...s, kind: 'spot' }))
+  ;(data.spotIncomes || [])
+    .filter(s => s.date?.startsWith(monthStr))
+    .forEach(s => add(parseInt(s.date.split('-')[2]), { ...s, kind: 'spotIncome' }))
 
   return events
 }

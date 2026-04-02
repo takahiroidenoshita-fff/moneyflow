@@ -35,6 +35,7 @@ export default function App() {
     const key = type === 'income' ? 'incomes'
       : type === 'fixed' ? 'fixedCosts'
       : type === 'spot' ? 'spotCosts'
+      : type === 'spotIncome' ? 'spotIncomes'
       : 'wishlist'
 
     setData(prev => ({
@@ -50,6 +51,7 @@ export default function App() {
     const key = type === 'income' ? 'incomes'
       : type === 'fixed' ? 'fixedCosts'
       : type === 'spot' ? 'spotCosts'
+      : type === 'spotIncome' ? 'spotIncomes'
       : 'wishlist'
     setData(prev => ({ ...prev, [key]: prev[key].filter(i => i.id !== id) }))
     closeModal()

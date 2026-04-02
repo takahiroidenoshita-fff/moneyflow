@@ -32,6 +32,7 @@ export const DEFAULT_DATA = {
   spotCosts: [
     { id: 1, name: '消費税', amount: 200000, date: '2026-04-30', category: 'tax' },
   ],
+  spotIncomes: [],
   wishlist: [
     { id: 1, name: 'カメラ新機材', amount: 150000, priority: 'high', done: false },
   ],
@@ -45,6 +46,7 @@ export function loadData() {
       const parsed = JSON.parse(raw)
       // migrate: add accounts if missing
       if (!parsed.accounts) parsed.accounts = DEFAULT_DATA.accounts
+      if (!parsed.spotIncomes) parsed.spotIncomes = []
       return parsed
     }
   } catch {}

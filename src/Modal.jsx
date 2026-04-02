@@ -55,6 +55,10 @@ const TYPE_CONFIG = {
     title: (edit) => edit ? 'スポット支出を編集' : 'スポット支出を追加',
     fields: ['name', 'amount', 'date', 'category'],
   },
+  spotIncome: {
+    title: (edit) => edit ? '臨時収入を編集' : '臨時収入を追加',
+    fields: ['name', 'amount', 'date'],
+  },
   wishlist: {
     title: (edit) => edit ? '欲しいものを編集' : '欲しいものを追加',
     fields: ['name', 'amount', 'priority'],
@@ -72,10 +76,11 @@ export default function Modal({ modal, onSave, onDelete, onClose }) {
       const now = new Date()
       const monthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`
       const defaults = {
-        income:   { name: '', amount: '', day: 15, type: 'confirmed' },
-        fixed:    { name: '', amount: '', day: 1 },
-        spot:     { name: '', amount: '', date: `${monthStr}-01`, category: 'tax' },
-        wishlist: { name: '', amount: '', priority: 'medium', done: false },
+        income:      { name: '', amount: '', day: 15, type: 'confirmed' },
+        fixed:       { name: '', amount: '', day: 1 },
+        spot:        { name: '', amount: '', date: `${monthStr}-01`, category: 'tax' },
+        spotIncome:  { name: '', amount: '', date: `${monthStr}-01` },
+        wishlist:    { name: '', amount: '', priority: 'medium', done: false },
       }
       setForm({ ...defaults[modal.type], ...modal.defaults })
     }

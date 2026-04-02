@@ -110,7 +110,7 @@ export default function CalendarView({ data, ym, onOpenModal }) {
           const isPast = isCurrentMonth && day < todayDate
 
           const dayInOut = events.reduce((acc, e) => {
-            if (e.kind === 'income') acc.income += e.amount
+            if (e.kind === 'income' || e.kind === 'spotIncome') acc.income += e.amount
             else acc.out += e.amount
             return acc
           }, { income: 0, out: 0 })
@@ -154,16 +154,16 @@ export default function CalendarView({ data, ym, onOpenModal }) {
                 <div key={i} style={{
                   fontSize: 9, borderRadius: 3, padding: '1px 4px',
                   marginBottom: 2,
-                  background: ev.kind === 'income' ? '#dcfce7'
+                  background: ev.kind === 'income' || ev.kind === 'spotIncome' ? '#dcfce7'
                     : ev.kind === 'spot' ? '#ede9fe'
                     : '#fee2e2',
-                  color: ev.kind === 'income' ? '#15803d'
+                  color: ev.kind === 'income' || ev.kind === 'spotIncome' ? '#15803d'
                     : ev.kind === 'spot' ? '#6d28d9'
                     : '#b91c1c',
                   fontWeight: 600,
                   whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
                 }}>
-                  {ev.kind === 'income' ? '↑' : '↓'}{ev.name.slice(0, 5)}
+                  {ev.kind === 'income' || ev.kind === 'spotIncome' ? '↑' : '↓'}{ev.name.slice(0, 5)}
                 </div>
               ))}
               {events.length > 3 && (
@@ -228,14 +228,17 @@ export default function CalendarView({ data, ym, onOpenModal }) {
                 <div key={i} style={{
                   display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   padding: '10px 12px', borderRadius: 10,
-                  background: ev.kind === 'income' ? '#f0fdf4'
+                  background: ev.kind === 'income' || ev.kind === 'spotIncome' ? '#f0fdf4'
                     : ev.kind === 'spot' ? '#f5f3ff'
                     : '#fff1f2',
                   cursor: 'pointer',
                 }}
                   onClick={(e) => {
                     e.stopPropagation()
-                    onOpenModal(ev.kind === 'income' ? 'income' : ev.kind === 'spot' ? 'spot' : 'fixed', ev)
+                    const type = ev.kind === 'income' ? 'income'
+                      : ev.kind === 'spotIncome' ? 'spotIncome'
+                      : ev.kind === 'spot' ? 'spot' : 'fixed'
+                    onOpenModal(type, ev)
                   }}
                 >
                   <div>
@@ -243,6 +246,7 @@ export default function CalendarView({ data, ym, onOpenModal }) {
                     <div style={{ fontSize: 10, color: 'var(--text3)', marginTop: 1 }}>
                       {ev.kind === 'income'
                         ? ev.type === 'confirmed' ? '確定収入' : '見込み収入'
+                        : ev.kind === 'spotIncome' ? '臨時収入'
                         : ev.kind === 'spot'
                         ? SPOT_CATEGORIES[ev.category]?.label || 'スポット'
                         : '固定費'}
@@ -250,9 +254,11 @@ export default function CalendarView({ data, ym, onOpenModal }) {
                   </div>
                   <div style={{
                     fontWeight: 700, fontSize: 14,
-                    color: ev.kind === 'income' ? 'var(--green)' : ev.kind === 'spot' ? '#7c3aed' : 'var(--red)',
+                    color: ev.kind === 'income' || ev.kind === 'spotIncome'
+                      ? 'var(--green)'
+                      : ev.kind === 'spot' ? '#7c3aed' : 'var(--red)',
                   }}>
-                    {ev.kind === 'income' ? '+' : '−'}{fmt(ev.amount)}
+                    {ev.kind === 'income' || ev.kind === 'spotIncome' ? '+' : '−'}{fmt(ev.amount)}
                   </div>
                 </div>
               ))}
@@ -286,6 +292,7 @@ export default function CalendarView({ data, ym, onOpenModal }) {
       <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
         {[
           { label: '+ 収入', type: 'income', color: 'var(--green)', bg: 'var(--green-light)' },
+          { label: '+ 臨時収入', type: 'spotIncome', color: '#059669', bg: '#d1fae5' },
           { label: '+ 固定費', type: 'fixed', color: 'var(--red)', bg: 'var(--red-light)' },
           { label: '+ スポット', type: 'spot', color: 'var(--purple)', bg: 'var(--purple-light)' },
         ].map(b => (

@@ -137,6 +137,27 @@ export default function FlowsView({ data, ym, onOpenModal, onUpdateBuffer, onUpd
         </div>
       </div>
 
+      {/* Spot incomes this month */}
+      <Section
+        title={`臨時収入（${MONTHS[m]}）`}
+        color="#059669" bg="#d1fae5"
+        items={(data.spotIncomes || []).filter(s => s.date?.startsWith(monthStr))}
+        onAdd={() => onOpenModal('spotIncome', null)}
+      >
+        {(data.spotIncomes || [])
+          .filter(s => s.date?.startsWith(monthStr))
+          .map(s => (
+          <Item
+            key={s.id}
+            name={s.name}
+            sub={s.date}
+            amount={s.amount}
+            isIncome
+            onClick={() => onOpenModal('spotIncome', s)}
+          />
+        ))}
+      </Section>
+
       {/* Incomes */}
       <Section
         title="収入"
